@@ -9,10 +9,12 @@ from vk.user import User
 from vk.cli_parser import parser
 
 VERSION = "5.131"
-
-
-QUERY_TEMPLATE = "https://api.vk.com/method/friends.get?user_id={" \
-                 "}&access_token={}&v={}&fields=first_name"
+APP_ID = "7851379"
+AUTH_QUERY = 'https://oauth.vk.com/authorize?client_id={}&display=page'\
+             '&redirect_uri=https://oauth.vk.com/blank.html&scope=friends'\
+             '&response_type=token&v={}'.format(APP_ID, VERSION)
+QUERY_TEMPLATE = "https://api.vk.com/method/friends.get?user_id={}" \
+                 "&access_token={}&v={}&fields=first_name"
 
 TOKEN = os.environ.get("VK_TOKEN")
 if TOKEN is None:
@@ -44,5 +46,10 @@ def count_friends(user_id: int) -> Dict:
 
 if __name__ == "__main__":
     args = parser.parse_args()
+    if args.auth:
+        print("Open this link into your browser")
+        print(AUTH_QUERY)
+        print("And enter your access_token")
+        TOKEN = input("Access_token: ")
     friends = find_friends(args.user_id)
     print(*sorted(friends, key=lambda f: f.count, reverse=True), sep="\n")
